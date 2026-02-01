@@ -1,0 +1,23 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+// src/pages/404.astro
+export const prerender = true;  // Important: ensures static generation
+---
+
+<!doctype html>
+<html lang="en" class="dark">
+<head>
+<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Page Not Found</title>
+</head>
+<body>
+    <main style="text-align: center; padding: 15rem;">
+        <h1 class="text-stone-700">404</h1>
+        <p class="text-stone-700">Page not found</p>
+        <a href="/">Go Home</a>
+    </main>
+</body>
+</html>
