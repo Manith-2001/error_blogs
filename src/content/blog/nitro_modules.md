@@ -2,7 +2,7 @@
 title: 'NitroModules vs TurboModules'
 description: 'What is NitroModules and why is it all the hype right now'
 pubDate: '01 Feb 2026'
-heroImage: '../../assets/nitro_logo.svg'
+heroImage: '../../assets/nitro_hero.jpg'
 ---
 
 ### What is Nitro
