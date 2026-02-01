@@ -11,8 +11,8 @@ So I will quote the main docs of NitroModules to explain what exactly it is :
 
 > Nitro is a framework for building powerful and fast native modules for JS. Simply put, a JS object can be implemented in C++, Swift or Kotlin instead of JS by using Nitro. 
 
-Now historically speaking (like since the 2022's I dont know how historical is that by coding standards) TurboModules was the defacto way of writing native modules. It boasted better performance than it's predecessor Legacy Native Modules (How it gave these performance boost
-is a topic reserved for another post all together).
+Now historically speaking (like since the 2022's I dont know how historical is that by coding standards) TurboModules was the de-facto way of writing native modules. It boasted better performance than its predecessor Legacy Native Modules (How it gave these performance boost
+is a topic reserved for another post alltogether).
 
 However in present day the benchmarks tell another story all together. Performance wise Nitro has Turbo beat and hence is slowly becoming the defacto way for people to implement their native modules (You can find the relevant benchmarks over [here](https://github.com/mrousavy/NitroBenchmarks) )
 
@@ -29,7 +29,7 @@ go ahead and add Nitro to your project.
 
 ### Swift Support 
 
-For all you iOS developers this probably could be the most interesting part of Nitro Modules. Nitro Provides swift support compared to Turbo that bridges swift code through Objective-C code. What does this mean for developers is a significant decrease in writing boiler plate code. For Example take a look at this code here : 
+For all you iOS developers this probably could be the most interesting part of Nitro Modules. Nitro provides swift support compared to Turbo that bridges swift code through Objective-C code. What does this mean for developers is a significant decrease in writing boilerplate code. For Example take a look at this code here : 
 
 ```swift
 class HybridMath : HybridMathSpec {
@@ -61,21 +61,21 @@ This is possible because Nitro bridges Swift via a C++ interface
 
 ### TypeSafe and Developer UX
 
-Ok enough of theoretical blabbering let's jump into the code and see one of the reasons why developers are liking Nitro so much. To start with we will have to make a nitro module now there are many ways of doing so but we will be using the create-nitro-module for this demonstartion purposes
+Ok enough of theoretical blabbering let's jump into the code and see one of the reasons why developers are liking Nitro so much. To start with we will have to make a nitro module now there are many ways of doing so but we will be using the create-nitro-module for this demonstration purposes
 
 ```bash
 npx create-nitro-module@latest
 ```
 <br>
 
-We will be name the package `react-native-math` for simplicity sake. Once generated navigate to the package 
+We will be naming the package `react-native-math` for simplicity sake. Once generated navigate to the package 
 
 ```bash
 cd react-native-math
 ```
 <br>
 
-and you will find `node_modules` aleady present as well as the `nitrogen` directory with the bridging-code already generated so for our next step we will navigate to the `example` app directory and install it's dependencies
+and you will find `node_modules` already present as well as the `nitrogen` directory with the bridging-code already generated so for our next step we will navigate to the `example` app directory and install its dependencies
 
 ```bash
 cd example/
@@ -83,18 +83,18 @@ npm i
 ```
 <br>
 
-Now with that done we can open the `android` directory in android study and start editing the native code.
+Now with that done we can open the `android` directory in Android studio and start editing the native code.
 
 ```bash
 studio android/
 ```
 <br>
 
-Once the project is opened and the gardle sync fianlly finishes (it takes forever sometimes) you will see the following files in your project
+Once the project is opened and the Gradle sync finally finishes (it takes forever sometimes) you will see the following files in your project
 
 ![android_project](../../assets/android_project.png)
 
-Now let's try something fun navigate over to the `math.nitro.ts` file and you will see something like this : 
+Now let's try something fun, navigate over to the `math.nitro.ts` file and you will see something like this : 
 
 ```ts 
 
@@ -106,7 +106,7 @@ export interface Math extends HybridObject<{ ios: 'swift', android: 'kotlin' }> 
 ```
 <br>
 
-now let's add another function sub that we would like to implement on the native side to subtract a number
+now let's add another function sub, that we would like to implement on the native side to subtract a number
 
 ```ts 
 
@@ -135,6 +135,6 @@ And the best part is now you will be seeing an error like this :
 ![error_spec](../../assets/error_spec.png)
 
 This is one of the many benefits of running codegen while developing in contrast to what Turbo does and run it only on App compile time.
-This provides typesafe and better context for developers jumping back and forth between the TypeScript code and the Native code.
+This provides TypeSafe and better context for developers jumping back and forth between the TypeScript code and the Native code.
 
-These are just a few of the benefits of using Nitro over Turbo when creating native modules. If you found this interesting and would like to incoporate it into your upcoming projects do give a star to the [Nitro repo](https://github.com/mrousavy/nitro) and to learn more you can always refer to the [Nitro docs](https://nitro.margelo.com/docs/what-is-nitro) they are a good starting point as well.
+These are just a few of the benefits of using Nitro over Turbo when creating native modules. If you found this interesting and would like to incorporate it into your upcoming projects do give a star to the [Nitro repo](https://github.com/mrousavy/nitro) and to learn more you can always refer to the [Nitro docs](https://nitro.margelo.com/docs/what-is-nitro) they are a good starting point as well.
