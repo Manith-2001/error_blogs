@@ -148,7 +148,7 @@ img {
 }
 code {
   padding: 2px 5px;
-  background-color: rgb(var(--gray-light));
+  background-color: rgb(var(--gray-dark));
   border-radius: 2px;
 }
 pre {
