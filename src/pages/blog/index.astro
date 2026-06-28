@@ -16,97 +16,56 @@ const posts = (await getCollection('blog')).sort(
 <html lang="en" class="dark">
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-		<style>
-			main {
-				width: 960px;
-			}
-			ul {
-				display: flex;
-				flex-wrap: wrap;
-				gap: 2rem;
-				list-style-type: none;
-				margin: 0;
-				padding: 0;
-			}
-			ul li {
-				width: calc(50% - 1rem);
-			}
-			ul li * {
-				text-decoration: none;
-				transition: 0.2s ease;
-			}
-			ul li:first-child {
-				width: 100%;
-				margin-bottom: 1rem;
-				text-align: center;
-			}
-			ul li:first-child img {
-				width: 100%;
-			}
-			ul li:first-child .title {
-				font-size: 2.369rem;
-			}
-			ul li img {
-				margin-bottom: 0.5rem;
-				border-radius: 12px;
-			}
-			ul li a {
-				display: block;
-			}
-			.title {
-				margin: 0;
-				color: rgb(var(--gray-light));
-				line-height: 1;
-			}
-			.date {
-				margin: 0;
-				color: rgb(var(--gray));
-			}
-			ul li a:hover h4,
-			ul li a:hover .date {
-				color: rgb(var(--accent));
-			}
-			ul a:hover img {
-				box-shadow: var(--box-shadow);
-			}
-			@media (max-width: 720px) {
-				ul {
-					gap: 0.5em;
-				}
-				ul li {
-					width: 100%;
-					text-align: center;
-				}
-				ul li:first-child {
-					margin-bottom: 0;
-				}
-				ul li:first-child .title {
-					font-size: 1.563em;
-				}
-			}
-		</style>
 	</head>
-	<body>
+	<body class="min-h-screen flex flex-col">
 		<Header />
-		<main>
-			<section>
-				<ul>
+		<main class="flex-1">
+			<section class="mx-auto max-w-5xl px-4 py-12 md:px-6 md:py-16">
+				<div class="mb-10">
+					<h1 class="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+						Blog
+					</h1>
+					<p class="mt-2 text-muted-foreground">
+						{posts.length} post{posts.length !== 1 ? 's' : ''} published
+					</p>
+				</div>
+
+				<div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
 					{
-						posts.map((post) => (
-							<li>
-								<a href={`/blog/${post.id}/`}>
+						posts.map((post, index) => (
+							<article class="group flex flex-col overflow-hidden rounded-xl border border-border/60 bg-card text-card-foreground shadow-sm transition-all hover:shadow-md hover:border-border">
+								<a href={`/blog/${post.id}/`} class="flex flex-col h-full">
 									{post.data.heroImage && (
-										<Image width={720} height={360} src={post.data.heroImage} alt="" />
+										<div class="aspect-video overflow-hidden">
+											<Image
+												width={720}
+												height={360}
+												src={post.data.heroImage}
+												alt=""
+												class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+											/>
+										</div>
 									)}
-									<h4 class="title">{post.data.title}</h4>
-									<p class="date">
-										<FormattedDate date={post.data.pubDate} />
-									</p>
+									<div class="flex flex-col flex-1 p-5">
+										<h2 class="text-lg font-semibold leading-snug tracking-tight text-card-foreground group-hover:text-primary transition-colors">
+											{post.data.title}
+										</h2>
+										{post.data.description && (
+											<p class="mt-2 line-clamp-2 text-sm text-muted-foreground">
+												{post.data.description}
+											</p>
+										)}
+										<div class="mt-auto pt-4">
+											<span class="inline-flex items-center rounded-full border border-border/60 bg-secondary px-2.5 py-0.5 text-xs font-medium text-secondary-foreground">
+												<FormattedDate date={post.data.pubDate} />
+											</span>
+										</div>
+									</div>
 								</a>
-							</li>
+							</article>
 						))
 					}
-				</ul>
+				</div>
 			</section>
 		</main>
 		<Footer />

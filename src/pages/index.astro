@@ -10,26 +10,32 @@ import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
 	</head>
-	<body>
+	<body class="min-h-screen flex flex-col">
 		<Header />
-		<main class="text-white">
-			<h1>Hello, Fellow Developer!</h1>
-			<p>
-				Welcome to my ubnoxious and weird blogs
-			</p>
-			<p>
-				If you find anything of use to you here or even remotely helpful 
-				consider me honored. Please excuse my blog writing skills as well. If my thoughts and 
-				blog flow seems all over the place that is cause I am a scatter brain and that is 
-				literally how I think.
-			</p>
-			<p>
-				Aside from that let me address the elephant in the room. Yes this blog has ads. I know 
-				it is a bit weird but hosting this and buying domains cost money and I am just trying to recover 
-				some of those costs. This self-hosting thing maybe a hobby but it is an expensive one for sure 
-				I can tell you that.
-			</p>
-			<p>Anyways aside from all that have fun and Happy Coding !</p>
+		<main class="flex-1">
+			<section class="mx-auto max-w-3xl px-4 py-24 md:px-6 md:py-32">
+				<h1 class="text-4xl font-semibold tracking-tight text-foreground sm:text-5xl md:text-6xl">
+					Hello, Fellow Developer!
+				</h1>
+				<div class="mt-8 space-y-6 text-lg leading-relaxed text-muted-foreground">
+					<p>
+						Welcome to my obnoxious and weird blogs
+					</p>
+					<p>
+						If you find anything of use to you here or even remotely helpful 
+						consider me honored. Please excuse my blog writing skills as well. If my thoughts and 
+						blog flow seems all over the place that is cause I am a scatter brain and that is 
+						literally how I think.
+					</p>
+					<p>
+						Aside from that let me address the elephant in the room. Yes this blog has ads. I know 
+						it is a bit weird but hosting this and buying domains cost money and I am just trying to recover 
+						some of those costs. This self-hosting thing maybe a hobby but it is an expensive one for sure 
+						I can tell you that.
+					</p>
+					<p>Anyways aside from all that have fun and Happy Coding !</p>
+				</div>
+			</section>
 		</main>
 		<Footer />
 	</body>

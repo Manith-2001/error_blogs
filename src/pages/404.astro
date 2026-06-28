@@ -1,23 +1,36 @@
 ---
 import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
-// src/pages/404.astro
-export const prerender = true;  // Important: ensures static generation
+
+export const prerender = true;
 ---
 
 <!doctype html>
 <html lang="en" class="dark">
-<head>
-<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>404 - Page Not Found</title>
-</head>
-<body>
-    <main style="text-align: center; padding: 15rem;">
-        <h1 class="text-stone-700">404</h1>
-        <p class="text-stone-700">Page not found</p>
-        <a href="/">Go Home</a>
-    </main>
-</body>
+	<head>
+		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>404 - Page Not Found</title>
+	</head>
+	<body class="min-h-screen flex flex-col">
+		<Header />
+		<main class="flex flex-1 flex-col items-center justify-center px-4 text-center">
+			<h1 class="text-7xl font-bold tracking-tighter text-muted-foreground sm:text-9xl">
+				404
+			</h1>
+			<p class="mt-4 text-lg text-muted-foreground">
+				Page not found
+			</p>
+			<a
+				href="/"
+				class="mt-8 inline-flex items-center justify-center rounded-md bg-primary px-6 py-3 text-sm font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90"
+			>
+				Go Home
+			</a>
+		</main>
+		<Footer />
+	</body>
 </html>
