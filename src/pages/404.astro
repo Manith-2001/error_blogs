@@ -1,8 +1,10 @@
 ---
+import AmbientBackground from '../components/AmbientBackground.astro';
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
-import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+import { Button } from '@/components/ui/button';
+import { SITE_TITLE } from '../consts';
 
 export const prerender = true;
 ---
@@ -10,26 +12,22 @@ export const prerender = true;
 <!doctype html>
 <html lang="en" class="dark">
 	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<BaseHead title={SITE_TITLE} description="Page not found" />
 		<title>404 - Page Not Found</title>
 	</head>
-	<body class="min-h-screen flex flex-col">
+	<body class="flex min-h-screen flex-col">
+		<AmbientBackground />
 		<Header />
-		<main class="flex flex-1 flex-col items-center justify-center px-4 text-center">
-			<h1 class="text-7xl font-bold tracking-tighter text-muted-foreground sm:text-9xl">
-				404
-			</h1>
-			<p class="mt-4 text-lg text-muted-foreground">
-				Page not found
-			</p>
-			<a
-				href="/"
-				class="mt-8 inline-flex items-center justify-center rounded-md bg-primary px-6 py-3 text-sm font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90"
-			>
-				Go Home
-			</a>
+		<main class="flex flex-1 flex-col items-center justify-center px-4 py-16 text-center">
+			<div class="glass flex flex-col items-center rounded-3xl px-10 py-14 sm:px-16">
+				<h1 class="text-7xl font-bold tracking-tighter text-muted-foreground sm:text-8xl">
+					404
+				</h1>
+				<p class="mt-4 text-lg text-muted-foreground">Page not found</p>
+				<Button asChild className="mt-8 rounded-full px-6">
+					<a href="/">Back Home</a>
+				</Button>
+			</div>
 		</main>
 		<Footer />
 	</body>

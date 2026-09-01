@@ -1,8 +1,19 @@
 ---
+import { getCollection } from 'astro:content';
+import AmbientBackground from '../components/AmbientBackground.astro';
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
+import PostCard from '../components/PostCard.astro';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { ArrowRight } from 'lucide-react';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+
+const posts = (await getCollection('blog')).sort(
+	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+const latest = posts.slice(0, 3);
 ---
 
 <!doctype html>
@@ -10,32 +21,60 @@ import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
 	</head>
-	<body class="min-h-screen flex flex-col">
+	<body class="flex min-h-screen flex-col">
+		<AmbientBackground />
 		<Header />
 		<main class="flex-1">
-			<section class="mx-auto max-w-3xl px-4 py-24 md:px-6 md:py-32">
-				<h1 class="text-4xl font-semibold tracking-tight text-foreground sm:text-5xl md:text-6xl">
+			<section class="mx-auto max-w-3xl px-4 pt-36 pb-16 md:px-6 md:pt-44">
+				<Badge variant="secondary" className="mb-6">Welcome</Badge>
+				<h1 class="text-4xl font-bold tracking-tighter text-foreground sm:text-5xl md:text-6xl">
 					Hello, Fellow Developer!
 				</h1>
-				<div class="mt-8 space-y-6 text-lg leading-relaxed text-muted-foreground">
+				<div class="mt-8 max-w-2xl space-y-5 text-lg leading-relaxed text-muted-foreground">
+					<p>Welcome to my obnoxious and weird blogs.</p>
 					<p>
-						Welcome to my obnoxious and weird blogs
+						If you find anything of use to you here or even remotely helpful consider me honored.
+						Please excuse my blog writing skills as well. If my thoughts and blog flow seems all
+						over the place that is cause I am a scatter brain and that is literally how I think.
 					</p>
-					<p>
-						If you find anything of use to you here or even remotely helpful 
-						consider me honored. Please excuse my blog writing skills as well. If my thoughts and 
-						blog flow seems all over the place that is cause I am a scatter brain and that is 
-						literally how I think.
-					</p>
-					<p>
-						Aside from that let me address the elephant in the room. Yes this blog has ads. I know 
-						it is a bit weird but hosting this and buying domains cost money and I am just trying to recover 
-						some of those costs. This self-hosting thing maybe a hobby but it is an expensive one for sure 
-						I can tell you that.
-					</p>
-					<p>Anyways aside from all that have fun and Happy Coding !</p>
+					<p>Anyways aside from all that have fun and Happy Coding!</p>
+				</div>
+				<p class="mt-6 max-w-2xl text-xs leading-relaxed text-muted-foreground/70">
+					Heads up: this blog has ads. Hosting and domains cost money and I am just trying to
+					recover some of those costs. This self-hosting thing may be a hobby, but it is an
+					expensive one for sure.
+				</p>
+				<div class="mt-10 flex flex-wrap items-center gap-3">
+					<Button asChild className="rounded-full px-6">
+						<a href="/blog">Read the Blog</a>
+					</Button>
+					<Button variant="outline" asChild className="rounded-full px-6">
+						<a href="/about">About Me</a>
+					</Button>
 				</div>
 			</section>
+
+			{
+				latest.length > 0 && (
+					<section class="mx-auto w-full max-w-5xl px-4 pb-20 md:px-6">
+						<div class="mb-6 flex items-end justify-between">
+							<h2 class="text-2xl font-bold tracking-tight">Latest posts</h2>
+							<a
+								href="/blog"
+								class="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+							>
+								View all
+								<ArrowRight className="size-4" />
+							</a>
+						</div>
+						<div class="grid gap-4 md:grid-cols-3">
+							{latest.map((post) => (
+								<PostCard post={post} />
+							))}
+						</div>
+					</section>
+				)
+			}
 		</main>
 		<Footer />
 	</body>

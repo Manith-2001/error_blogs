@@ -1,10 +1,11 @@
 ---
-import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
+import AmbientBackground from '../../components/AmbientBackground.astro';
 import BaseHead from '../../components/BaseHead.astro';
 import Footer from '../../components/Footer.astro';
-import FormattedDate from '../../components/FormattedDate.astro';
 import Header from '../../components/Header.astro';
+import PostCard from '../../components/PostCard.astro';
+import { Badge } from '@/components/ui/badge';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../../consts';
 
 const posts = (await getCollection('blog')).sort(
@@ -17,54 +18,20 @@ const posts = (await getCollection('blog')).sort(
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
 	</head>
-	<body class="min-h-screen flex flex-col">
+	<body class="flex min-h-screen flex-col">
+		<AmbientBackground />
 		<Header />
 		<main class="flex-1">
-			<section class="mx-auto max-w-5xl px-4 py-12 md:px-6 md:py-16">
-				<div class="mb-10">
-					<h1 class="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-						Blog
-					</h1>
-					<p class="mt-2 text-muted-foreground">
-						{posts.length} post{posts.length !== 1 ? 's' : ''} published
-					</p>
+			<section class="mx-auto w-full max-w-3xl px-4 pt-32 pb-20 md:px-6 md:pt-40">
+				<div class="mb-10 flex items-center gap-3">
+					<h1 class="text-3xl font-bold tracking-tighter text-foreground sm:text-4xl">Blog</h1>
+					<Badge variant="secondary">
+						{posts.length} post{posts.length !== 1 ? 's' : ''}
+					</Badge>
 				</div>
 
-				<div class="grid gap-6">
-					{
-						posts.map((post, index) => (
-							<article class="group flex flex-col overflow-hidden rounded-xl border border-border/60 bg-card text-card-foreground shadow-sm transition-all hover:shadow-md hover:border-border">
-								<a href={`/blog/${post.id}/`} class="flex flex-col h-full">
-									{post.data.heroImage && (
-										<div class="aspect-video overflow-hidden">
-											<Image
-												width={720}
-												height={360}
-												src={post.data.heroImage}
-												alt=""
-												class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-											/>
-										</div>
-									)}
-									<div class="flex flex-col flex-1 p-5">
-										<h2 class="text-lg font-semibold leading-snug tracking-tight text-card-foreground group-hover:text-primary transition-colors">
-											{post.data.title}
-										</h2>
-										{post.data.description && (
-											<p class="mt-2 line-clamp-2 text-sm text-muted-foreground">
-												{post.data.description}
-											</p>
-										)}
-										<div class="mt-auto pt-4">
-											<span class="inline-flex items-center rounded-full border border-border/60 bg-secondary px-2.5 py-0.5 text-xs font-medium text-secondary-foreground">
-												<FormattedDate date={post.data.pubDate} />
-											</span>
-										</div>
-									</div>
-								</a>
-							</article>
-						))
-					}
+				<div class="grid gap-4">
+					{posts.map((post) => <PostCard post={post} />)}
 				</div>
 			</section>
 		</main>
