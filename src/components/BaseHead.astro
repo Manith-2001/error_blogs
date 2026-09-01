@@ -19,8 +19,8 @@ const { title, description, image = FallbackImage } = Astro.props;
 
 
 <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-JNZR0P8HGZ"></script>
-<script>
+<script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-JNZR0P8HGZ"></script>
+<script is:inline>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
@@ -29,8 +29,8 @@ const { title, description, image = FallbackImage } = Astro.props;
 </script>
 
 <!--Ads script tag-->
-<script src="https://pl28625885.effectivegatecpm.com/1f/e8/67/1fe867065b39f06c70741ae82dce24da.js"></script>
-<script async="async" data-cfasync="false" src="https://pl28625836.effectivegatecpm.com/cd2e1d447c4437610033781947b29384/invoke.js"></script>
+<script is:inline src="https://pl28625885.effectivegatecpm.com/1f/e8/67/1fe867065b39f06c70741ae82dce24da.js"></script>
+<script is:inline async="async" data-cfasync="false" src="https://pl28625836.effectivegatecpm.com/cd2e1d447c4437610033781947b29384/invoke.js"></script>
 
  <!-- For SVG (recommended) -->
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
