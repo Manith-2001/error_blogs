@@ -1,15 +1,37 @@
 ---
-import Layout from '../layouts/BlogPost.astro';
+import AmbientBackground from '../components/AmbientBackground.astro';
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { SITE_DESCRIPTION } from '../consts';
+
+export const prerender = true;
 ---
 
-<Layout
-	title="About Me"
-	description="Just a weird programmer"
-	pubDate={new Date('Feburary 01 2026')}
->
-	<p>
-		I have nothing special to write here. Just werid programmer doing weird things. If you find anything that I have written
-		interesting then sorry to break it to you but you might be weird too.
-	</p>
-
-</Layout>
+<!doctype html>
+<html lang="en" class="dark">
+	<head>
+		<BaseHead title="About Me" description={SITE_DESCRIPTION} />
+	</head>
+	<body class="flex min-h-screen flex-col">
+		<AmbientBackground />
+		<Header />
+		<main class="flex flex-1 items-center justify-center px-4 py-16">
+			<Card className="glass w-full max-w-2xl rounded-3xl border-none shadow-none">
+				<CardHeader>
+					<CardTitle className="text-2xl font-bold tracking-tighter">About Me</CardTitle>
+					<CardDescription>Just a weird programmer</CardDescription>
+				</CardHeader>
+				<CardContent className="text-base leading-relaxed text-muted-foreground">
+					<p>
+						I have nothing special to write here. Just a weird programmer doing weird things. If
+						you find anything that I have written interesting then sorry to break it to you but
+						you might be weird too.
+					</p>
+				</CardContent>
+			</Card>
+		</main>
+		<Footer />
+	</body>
+</html>
