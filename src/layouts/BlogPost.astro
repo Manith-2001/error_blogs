@@ -1,23 +1,56 @@
 ---
 import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
+import type { MarkdownHeading } from 'astro';
 import AmbientBackground from '../components/AmbientBackground.astro';
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
+import PostCard from '../components/PostCard.astro';
 import { Badge } from '@/components/ui/badge';
+import { SITE_AUTHOR, SITE_AUTHOR_URL, SITE_TITLE } from '../consts';
 import '../styles/global.css';
 
-type Props = CollectionEntry<'blog'>['data'];
+type Props = CollectionEntry<'blog'>['data'] & {
+	slug: string;
+	headings: MarkdownHeading[];
+};
 
-const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
+const { title, description, pubDate, updatedDate, heroImage, slug, headings } =
+	Astro.props;
+
+const relatedPosts = (await getCollection('blog'))
+	.filter((post) => post.id !== slug)
+	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+	.slice(0, 3);
+
+const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
+
+const schema = {
+	'@context': 'https://schema.org',
+	'@type': 'BlogPosting',
+	headline: title,
+	description,
+	datePublished: pubDate.toISOString(),
+	dateModified: (updatedDate ?? pubDate).toISOString(),
+	author: { '@type': 'Organization', name: SITE_TITLE },
+	publisher: { '@type': 'Organization', name: SITE_TITLE },
+	mainEntityOfPage: new URL(Astro.url.pathname, Astro.site).toString(),
+	...(heroImage ? { image: new URL(heroImage.src, Astro.site).toString() } : {}),
+};
 ---
 
 <!doctype html>
 <html lang="en" class="dark">
 	<head>
-		<BaseHead title={title} description={description} />
+		<BaseHead title={title} description={description} image={heroImage} />
+		<script
+			type="application/ld+json"
+			is:inline
+			set:html={JSON.stringify(schema)}
+		/>
 	</head>
 
 	<body class="flex min-h-screen flex-col">
@@ -34,7 +67,7 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 										width={1020}
 										height={510}
 										src={heroImage}
-										alt=""
+										alt={title}
 										loading="eager"
 										class="h-full w-full object-cover"
 									/>
@@ -57,16 +90,58 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 								)
 							}
 						</div>
-						<h1 class="text-3xl font-bold tracking-tighter text-foreground sm:text-4xl md:text-5xl">
-							{title}
-						</h1>
-					</div>
-					<div class="prose mt-10">
-						<slot />
-					</div>
+					<h1 class="text-3xl font-bold tracking-tighter text-foreground sm:text-4xl md:text-5xl">
+						{title}
+					</h1>
+					<p class="text-sm text-muted-foreground">
+						By
+						<a
+							href={SITE_AUTHOR_URL}
+							class="transition-colors hover:text-foreground"
+						>
+							{SITE_AUTHOR}
+						</a>
+					</p>
 				</div>
-			</article>
-		</main>
+				{
+					toc.length > 0 && (
+						<nav class="glass mt-10 rounded-2xl p-5" aria-label="Table of contents">
+							<h2 class="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
+								On this page
+							</h2>
+							<ul class="mt-3 space-y-2 text-sm">
+								{toc.map((h) => (
+									<li class={h.depth === 3 ? 'ml-4' : ''}>
+										<a
+											href={`#${h.slug}`}
+											class="text-muted-foreground transition-colors hover:text-foreground"
+										>
+											{h.text}
+										</a>
+									</li>
+								))}
+							</ul>
+						</nav>
+					)
+				}
+				<div class="prose mt-10">
+					<slot />
+				</div>
+			</div>
+		</article>
+		{
+			relatedPosts.length > 0 && (
+				<section class="mx-auto max-w-5xl px-4 pb-16 md:px-6">
+					<h2 class="text-2xl font-bold tracking-tighter text-foreground">Keep reading</h2>
+					<div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+						{relatedPosts.map((post) => (
+							<PostCard post={post} />
+						))}
+					</div>
+				</section>
+			)
+		}
+	</main>
 		<Footer />
 	</body>
 </html>

@@ -5,15 +5,15 @@ pubDate: '30 Aug 2026'
 heroImage: '../../assets/flasher_hero.png'
 ---
 
-### Why are we here
+## Why are we here
 
 Have you ever wondered as to how exactly is it that the tiny microcontroller that you program everyday for your university class or project takes that c code from your pc into its memory ? or maybe you are here because you are finally done prototyping and are going to make your very own pcb but have stopped in your tracks, wondering how is it that I can upload this custom program that I have written for my project onto the microcontroller that will be placed in my custom board. Well I can't help you with the schematic drawing for you personal PCB but I can certainly help you understand (from my basic and measly) understanding of how exactly is it that the program travels from your pc to the microcontroller.
 
-### Example 
+## Example 
 
 Now the best explanation is always provided with a real world example. Something we can go through step by step , dissect each step (maybe even break a few steps in the middle just to see what happens if it does) so for this explanation we will be taking the help of the Arduino's ArduinoISP.ino example sketch file which turns the arduino into an AVR microcontroller programmer. You can hop off here itself if you don't want to read this entire article (in case you are already bored from it) and look at the sketch file yourself since it is pretty well commented however if you choose to stick around I hope I don't disappoint you.
 
-### Code
+## Code
 
 So as soon as you enter the code you are greeted with the comments that explains what pins are we going to be using and what will their uses be . 
 ```c
@@ -63,7 +63,7 @@ Now next is a bit more nuanced detail that is the baud rate :
 ```
 Now this is the speed at which the program flasher reads the bytes of your compiled program from your pc so it is effectively the speed at which your target microcontroller is getting flashed. Now you must be thinking but you said the SPI clock speed is the speed at which we program our microcontroller and yes you would be correct to get confused, but here is the thing that SPI speed is the speed at which your microcontroller can understand things but the baud rate is the speed at which you're program flasher is reading the bytes of the program from your pc so even though your target controller might support higher speeds the effective speed it gets programmed at is the speed at which the flasher reads the data from the pc.
 
-#### Side Note : 
+### Side Note : 
 In case you would in the future be looking to make a bitbanged SPI program for arduino you can always refer to this sketch as an example as you can see here it has the implementation to help you through it : 
 ```c
 class BitBangedSPI {
@@ -211,7 +211,7 @@ void avrisp() {
 
 Now over here is where we get to see custom bytes which when read over SPI perform specific commands pertaining to flashing to getting data back from the controller as well. However we cannot be typing each byte and command into the serial monitor of the arduino and program the target controller. Well don't worry we don't have to this is every flasher has a software utility that comes with it which knows what commands to send and in what order to send the bytes in , in this case to program an AVR controller we use a software known as : **AVRDUDE** . (To know more about how to use this sketch with an actual AVR microcontroller you can refer to this link : https://riktronics.wordpress.com/2016/07/26/program-avr-using-arduino-simplest-way/#more-621)
 
-### MOST INTERESTING FUNCTIONS
+## MOST INTERESTING FUNCTIONS
 
 Now there are a lot of functionalities that a programmer has but the ones we are mainly interested with are these : 
 - The program flashing starter function : 
@@ -278,10 +278,10 @@ void read_signature() {
   SERIAL.print((char)STK_OK);
 }
 ```
-### Conclusion
+## Conclusion
 
 This is pretty much all that happens from the pc to the flashers side. All it is reading bytes over serial and sending them via SPI to the target controller all you have to keep in mind is to send certain commands is a specific order and you are good to go. Now however there are other protocols like JTAG and SWD and they might read and send data in different formats and order but the underlying principle remains the same.
 
-### Next Steps
+## Next Steps
 
 Well now we will have to investigate as to what happens when these bytes reach the microcontroller and how does it boot and what are the procedures that happen before it boots into the main program that we have flashed.
