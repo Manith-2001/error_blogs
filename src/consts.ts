@@ -3,3 +3,5 @@
 
 export const SITE_TITLE = 'Erroroverflow Blogs';
 export const SITE_DESCRIPTION = 'Helpful Blogs';
+export const SITE_AUTHOR = 'Erroroverflow';
+export const SITE_AUTHOR_URL = '/about/';
