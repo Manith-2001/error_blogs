@@ -3,6 +3,7 @@ title: 'How do you flash a program onto a microcontroller'
 description: 'Ever thought of what actually happens when you connect your arduino to your pc and click flash. What is actually happening that the program that you just wrote magically gets uploaded to that tiny microcontroller in front of you just by the usb port of your pc.'
 pubDate: '30 Aug 2026'
 heroImage: '../../assets/flasher_hero.png'
+heroAlt: 'Glowing microcontroller chip icon on a purple and teal gradient background'
 ---
 
 ## Why are we here

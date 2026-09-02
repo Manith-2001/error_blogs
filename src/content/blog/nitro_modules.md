@@ -4,7 +4,12 @@ description: 'NitroModules vs TurboModules compared with real benchmarks: Swift 
 pubDate: '01 Feb 2026'
 updatedDate: '01 Sep 2026'
 heroImage: '../../assets/nitro_hero.jpg'
+heroAlt: 'NitroModules wordmark on a dark textured background'
 ---
+
+**NitroModules beats TurboModules by ~15x on raw JS↔native call overhead, and Turbo still wins on zero-dependency convenience — here's when each choice actually makes sense.** Nitro is a Swift/Kotlin-first framework built on JSI with direct C++ interop, while TurboModules is React Native core's battle-tested default. Below: a full feature matrix, real benchmark numbers from the [NitroBenchmarks](https://github.com/mrousavy/NitroBenchmarks) repo, a hands-on walkthrough of your first Nitro module, and a migration path if you're already on Turbo. Verdicts are mine, from shipping with both.
+
+## What is Nitro?
 
 ## What is Nitro?
 
