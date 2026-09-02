@@ -18,7 +18,7 @@ type Props = CollectionEntry<'blog'>['data'] & {
 	headings: MarkdownHeading[];
 };
 
-const { title, description, pubDate, updatedDate, heroImage, slug, headings } =
+const { title, description, pubDate, updatedDate, heroImage, heroAlt, slug, headings } =
 	Astro.props;
 
 const relatedPosts = (await getCollection('blog'))
@@ -39,6 +39,7 @@ const schema = {
 		'@type': 'Person',
 		name: SITE_AUTHOR,
 		url: new URL(SITE_AUTHOR_URL, Astro.site).toString(),
+		sameAs: ['https://github.com/Manith-2001'],
 	},
 	publisher: { '@type': 'Organization', name: SITE_TITLE },
 	mainEntityOfPage: new URL(Astro.url.pathname, Astro.site).toString(),
@@ -49,7 +50,7 @@ const schema = {
 <!doctype html>
 <html lang="en" class="dark">
 	<head>
-		<BaseHead title={title} description={description} image={heroImage} />
+		<BaseHead title={title} description={description} image={heroImage} type="article" />
 		<script
 			type="application/ld+json"
 			is:inline
@@ -71,7 +72,7 @@ const schema = {
 										width={1020}
 										height={510}
 										src={heroImage}
-										alt={title}
+										alt={heroAlt ?? title}
 										loading="eager"
 										class="h-full w-full object-cover"
 									/>

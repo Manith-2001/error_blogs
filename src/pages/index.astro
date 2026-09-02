@@ -8,18 +8,51 @@ import PostCard from '../components/PostCard.astro';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
-import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+import { SITE_AUTHOR, SITE_AUTHOR_URL, SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 
 const posts = (await getCollection('blog')).sort(
 	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
 const latest = posts.slice(0, 3);
+
+const schema = {
+	'@context': 'https://schema.org',
+	'@graph': [
+		{
+			'@type': 'WebSite',
+			name: SITE_TITLE,
+			description: SITE_DESCRIPTION,
+			url: new URL(Astro.url.pathname, Astro.site).toString(),
+		},
+		{
+			'@type': 'Person',
+			name: SITE_AUTHOR,
+			url: new URL(SITE_AUTHOR_URL, Astro.site).toString(),
+			sameAs: ['https://github.com/Manith-2001'],
+		},
+		{
+			'@type': 'Blog',
+			name: SITE_TITLE,
+			url: new URL('/blog', Astro.site).toString(),
+			blogPost: posts.map((post) => ({
+				'@type': 'BlogPosting',
+				headline: post.data.title,
+				url: new URL(`/blog/${post.id}/`, Astro.site).toString(),
+				datePublished: post.data.pubDate.toISOString(),
+			})),
+		},
+	],
+};
 ---
 
 <!doctype html>
 <html lang="en" class="dark">
 	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+		<BaseHead
+			title={`${SITE_TITLE} — Embedded systems & React Native dev blog`}
+			description={SITE_DESCRIPTION}
+		/>
+		<script type="application/ld+json" is:inline set:html={JSON.stringify(schema)} />
 	</head>
 	<body class="flex min-h-screen flex-col">
 		<AmbientBackground />
@@ -30,14 +63,18 @@ const latest = posts.slice(0, 3);
 				<h1 class="text-4xl font-bold tracking-tighter text-foreground sm:text-5xl md:text-6xl">
 					Hello, Fellow Developer!
 				</h1>
+				<p class="mt-4 text-lg font-medium text-foreground">
+					Erroroverflow — practical debugging notes on embedded systems and React Native.
+				</p>
 				<div class="mt-8 max-w-2xl space-y-5 text-lg leading-relaxed text-muted-foreground">
-					<p>Welcome to my obnoxious and weird blogs.</p>
+					<p>
+						Every post here starts with a real bug I hit and follows the trail it left behind —
+						from flashing microcontrollers to React Native internals.
+					</p>
 					<p>
 						If you find anything of use to you here or even remotely helpful consider me honored.
-						Please excuse my blog writing skills as well. If my thoughts and blog flow seems all
-						over the place that is cause I am a scatter brain and that is literally how I think.
+						Have fun and Happy Coding!
 					</p>
-					<p>Anyways aside from all that have fun and Happy Coding!</p>
 				</div>
 				<p class="mt-6 max-w-2xl text-xs leading-relaxed text-muted-foreground/70">
 					Heads up: this blog has ads. Hosting and domains cost money and I am just trying to

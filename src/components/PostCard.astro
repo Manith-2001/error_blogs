@@ -9,7 +9,7 @@ interface Props {
 }
 
 const { post } = Astro.props;
-const { title, description, pubDate, heroImage } = post.data;
+const { title, description, pubDate, heroImage, heroAlt } = post.data;
 ---
 
 <a
@@ -35,7 +35,7 @@ const { title, description, pubDate, heroImage } = post.data;
 			heroImage && (
 				<img
 					src={heroImage.src}
-					alt=""
+					alt={heroAlt ?? title}
 					class="hidden h-14 w-24 rounded-xl border border-border object-cover sm:block"
 					loading="lazy"
 				/>
