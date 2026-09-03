@@ -1,62 +1,57 @@
-# Astro Starter Kit: Blog
+# Erroroverflow Blogs
 
-```sh
-bun create astro@latest -- --template blog
-```
+Practical debugging notes and guides on embedded systems and React Native development.
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+**Live site: [blogs.erroroverflow.org](https://blogs.erroroverflow.org)**
 
-Features:
+Built with [Astro](https://astro.build), Tailwind CSS v4, and shadcn/ui. Deployed on Cloudflare.
 
-- ✅ Minimal styling (make it your own!)
-- ✅ 100/100 Lighthouse performance
-- ✅ SEO-friendly with canonical URLs and OpenGraph data
-- ✅ Sitemap support
-- ✅ RSS Feed support
-- ✅ Markdown & MDX support
+## Commands
 
-## 🚀 Project Structure
+All commands are run from the root of the project:
 
-Inside of your Astro project, you'll see the following folders and files:
+| Command            | Action                                     |
+| :----------------- | :----------------------------------------- |
+| `bun install`      | Install dependencies                       |
+| `bun dev`          | Start local dev server at `localhost:4321` |
+| `bun run build`    | Build the production site to `./dist/`     |
+| `bun preview`      | Preview the production build locally       |
+| `bun astro check`  | Type-check the project                     |
+
+> Use `bun run build`, not `bun build` — the latter runs Bun's bundler.
+
+## Project structure
 
 ```text
-├── public/
+├── public/            # static assets (fonts, icons, webmanifest)
 ├── src/
-│   ├── components/
-│   ├── content/
-│   ├── layouts/
-│   └── pages/
+│   ├── assets/        # post hero images
+│   ├── components/    # Astro components + shadcn/ui in src/components/ui/
+│   ├── content/
+│   │   └── blog/      # active posts (Markdown)
+│   ├── layouts/
+│   ├── pages/
+│   └── styles/
 ├── astro.config.mjs
-├── README.md
-├── package.json
-└── tsconfig.json
+└── package.json
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## Writing a post
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+Add a Markdown file to `src/content/blog/` with the following frontmatter:
 
-The `src/content/` directory contains "collections" of related Markdown and MDX documents. Use `getCollection()` to retrieve posts from `src/content/blog/`, and type-check your frontmatter using an optional schema. See [Astro's Content Collections docs](https://docs.astro.build/en/guides/content-collections/) to learn more.
+```yaml
+---
+title: "Post title"
+description: "Meta description"
+pubDate: "30 Aug 2026"
+heroImage: "../../assets/hero.png"  # optional
+heroAlt: "Describe the hero image"  # optional
+---
+```
 
-Any static assets, like images, can be placed in the `public/` directory.
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `bun install`             | Installs dependencies                            |
-| `bun dev`             | Starts local dev server at `localhost:4321`      |
-| `bun build`           | Build your production site to `./dist/`          |
-| `bun preview`         | Preview your build locally, before deploying     |
-| `bun astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `bun astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Check out [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+Posts are rendered by `src/pages/blog/[...slug].astro` using `getCollection('blog')`.
 
 ## Credit
 
-This theme is based off of the lovely [Bear Blog](https://github.com/HermanMartinus/bearblog/).
+Based on the [Astro blog starter](https://astro.build) and the lovely [Bear Blog](https://github.com/HermanMartinus/bearblog/).
