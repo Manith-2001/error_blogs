@@ -2,25 +2,22 @@
 title: 'NitroModules vs TurboModules'
 description: 'NitroModules vs TurboModules compared with real benchmarks: Swift support, codegen vs nitrogen, Hybrid Objects, and when each is the right choice in 2026.'
 pubDate: '01 Feb 2026'
-updatedDate: '01 Sep 2026'
+updatedDate: '15 Sep 2026'
 heroImage: '../../assets/nitro_hero.jpg'
 heroAlt: 'NitroModules wordmark on a dark textured background'
 ---
 
-**NitroModules beats TurboModules by ~15x on raw JS↔native call overhead, and Turbo still wins on zero-dependency convenience — here's when each choice actually makes sense.** Nitro is a Swift/Kotlin-first framework built on JSI with direct C++ interop, while TurboModules is React Native core's battle-tested default. Below: a full feature matrix, real benchmark numbers from the [NitroBenchmarks](https://github.com/mrousavy/NitroBenchmarks) repo, a hands-on walkthrough of your first Nitro module, and a migration path if you're already on Turbo. Verdicts are mine, from shipping with both.
+**NitroModules beats TurboModules by ~15x on raw JS↔native call overhead, and Turbo still wins on zero-dependency convenience — here's when each choice actually makes sense.** Nitro is a Swift/Kotlin-first framework built on JSI with direct C++ interop, while TurboModules is React Native core's battle-tested default. Below: a full feature matrix, real benchmark numbers from the [NitroBenchmarks](https://github.com/mrousavy/NitroBenchmarks) repo, a hands-on walkthrough of your first Nitro module, and a migration path if you're already on Turbo. The verdicts below come from the benchmark data and the walkthrough steps, not from brand preference.
 
 ## What is Nitro?
 
-## What is Nitro?
-
-So I will quote the main docs of NitroModules to explain what exactly it is : 
+The [official Nitro docs](https://nitro.margelo.com/docs/what-is-nitro) describe it best:
 
 > Nitro is a framework for building powerful and fast native modules for JS. Simply put, a JS object can be implemented in C++, Swift or Kotlin instead of JS by using Nitro. 
 
-Now historically speaking (like since the 2022's I dont know how historical is that by coding standards) TurboModules was the de-facto way of writing native modules. It boasted better performance than its predecessor Legacy Native Modules (How it gave these performance boost
-is a topic reserved for another post alltogether).
+Historically, TurboModules has been the de-facto way to write native modules since around 2022. It claimed better performance than the legacy Native Modules it replaced — how it achieved those gains is a topic for another post.
 
-However in present day the benchmarks tell another story all together. Performance wise Nitro has Turbo beat and hence is slowly becoming the defacto way for people to implement their native modules (the full numbers are shown in the benchmarks section below).
+Today the benchmarks tell a different story: Nitro outperforms Turbo, and it is steadily becoming the default choice for new native modules (the full numbers are shown in the benchmarks section below).
 
 ## NitroModules vs TurboModules at a glance
 
@@ -51,7 +48,7 @@ That's ~15x faster than Turbo and ~59x faster than Expo on `addNumbers`, ~5x / ~
 
 ## Swift support: the boilerplate difference
 
-For all you iOS developers this probably could be the most interesting part of Nitro Modules. Nitro provides swift support compared to Turbo that bridges swift code through Objective-C code. What does this mean for developers is a significant decrease in writing boilerplate code. For Example take a look at this code here : 
+For iOS developers, this is probably the most interesting part of Nitro. Nitro supports Swift directly, whereas TurboModules bridges Swift through Objective-C. The practical result is a lot less boilerplate. For example:
 
 ```swift
 class HybridMath : HybridMathSpec {
@@ -60,7 +57,7 @@ class HybridMath : HybridMathSpec {
 ```
 <br>
 
-compared to Turbo's way of doing it : 
+compared with TurboModules' Objective-C approach: 
 
 ```objc
 @implementation RTNMath {
@@ -79,11 +76,11 @@ RCT_EXPORT_MODULE()
 ```
 <br>
 
-This is possible because Nitro bridges Swift via a C++ interface
+This is possible because Nitro bridges Swift via a C++ interface.
 
 ## The one place Turbo still wins
 
-TurboModules is what is shipped with react-native core. So for all those particular about not wanting to increase the dependencies in their project this might make Turbo a more convenient choice for them. But for the rest of us who don't care about adding another package with
+TurboModules ships with React Native core, so if keeping dependencies minimal matters to you, Turbo is the more convenient choice. For everyone else, adding one package is cheap:
 
 ```bash
 npm i react-native-nitro-modules
@@ -94,21 +91,21 @@ go ahead and add Nitro to your project.
 
 ## Hands-on: your first Nitro module
 
-Ok enough of theoretical blabbering let's jump into the code and see one of the reasons why developers are liking Nitro so much. To start with we will have to make a nitro module now there are many ways of doing so but we will be using the create-nitro-module for this demonstration purposes
+Enough theory — let's build one. There are several ways to scaffold a Nitro module; for this walkthrough we'll use `create-nitro-module`.
 
 ```bash
 npx create-nitro-module@latest
 ```
 <br>
 
-We will be naming the package `react-native-math` for simplicity sake. Once generated navigate to the package 
+We'll name the package `react-native-math`. Once it's generated, enter the package directory:
 
 ```bash
 cd react-native-math
 ```
 <br>
 
-and you will find `node_modules` already present as well as the `nitrogen` directory with the bridging-code already generated so for our next step we will navigate to the `example` app directory and install its dependencies
+You'll find `node_modules` and a `nitrogen/` directory with the generated bridging code already in place. Next, install the example app's dependencies:
 
 ```bash
 cd example/
@@ -116,18 +113,18 @@ npm i
 ```
 <br>
 
-Now with that done we can open the `android` directory in Android studio and start editing the native code.
+Now open the `android` directory in Android Studio and start editing the native code:
 
 ```bash
 studio android/
 ```
 <br>
 
-Once the project is opened and the Gradle sync finally finishes (it takes forever sometimes) you will see the following files in your project
+Once the project opens and Gradle sync finishes (it can take a while), you'll see these files:
 
 ![android_project](../../assets/android_project.png)
 
-Now let's try something fun, navigate over to the `math.nitro.ts` file and you will see something like this : 
+Now open `math.nitro.ts` and you'll see the interface that defines the module:
 
 ```ts 
 
@@ -139,7 +136,7 @@ export interface Math extends HybridObject<{ ios: 'swift', android: 'kotlin' }> 
 ```
 <br>
 
-now let's add another function sub, that we would like to implement on the native side to subtract a number
+Now add a `sub` function to implement on the native side:
 
 ```ts 
 
@@ -152,23 +149,23 @@ export interface Math extends HybridObject<{ ios: 'swift', android: 'kotlin' }> 
 ```
 <br>
 
-After doing this we will have to regenerate the spec files by running 
+After editing the spec, regenerate the bridging code:
 
 ```bash
 npm run codegen
 ```
 <br>
 
-Now if you were to head on over to Android Studio and see the spec file you would see something like this : 
+Back in Android Studio, the generated spec now includes the new method:
 
 ![spec_file](../../assets/spec_file.png)
 
-And the best part is now you will be seeing an error like this : 
+The best part: your editor immediately flags the unimplemented method:
 
 ![error_spec](../../assets/error_spec.png)
 
-This is one of the many benefits of running codegen while developing in contrast to what Turbo does and run it only on App compile time.
-This provides TypeSafe and better context for developers jumping back and forth between the TypeScript code and the Native code.
+This is the payoff of running codegen during development: TurboModules only generate code at app compile time, so spec drift surfaces later.
+That provides type safety and better context when switching between TypeScript and native code.
 
 ## Already using TurboModules?
 
@@ -199,3 +196,12 @@ Migrating is less scary than it sounds:
 My take: the hype is real but narrower than it looks. Nitro didn't invent a faster engine — JSI did. Nitro removes the friction *around* the engine. For most apps the difference is invisible; for the right workloads it's the whole ballgame.
 
 If you're ready to try it, run `npx create-nitro-module@latest` and follow the walkthrough above. Want the full picture? Read the [official comparison](https://nitro.margelo.com/docs/resources/comparison) and check the raw numbers in [NitroBenchmarks](https://github.com/mrousavy/NitroBenchmarks). And if Nitro saves you a weekend of Objective-C boilerplate, a star on the [Nitro repo](https://github.com/mrousavy/nitro) is a fair trade.
+
+## Sources and further reading
+
+- [Nitro documentation](https://nitro.margelo.com/docs/what-is-nitro) — what Nitro is and how the module system works
+- [Nitro vs. Turbo and Expo comparison](https://nitro.margelo.com/docs/resources/comparison) — the official feature comparison
+- [Hybrid Objects](https://nitro.margelo.com/docs/hybrid-objects) — the object model the walkthrough above builds on
+- [NitroBenchmarks](https://github.com/mrousavy/NitroBenchmarks) — the source of the benchmark numbers in this post
+- [Turbo Native Modules](https://reactnative.dev/docs/turbo-native-modules-introduction) — React Native's own TurboModules guide
+- [Nitro repository](https://github.com/mrousavy/nitro) — source code and issue tracker

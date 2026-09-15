@@ -1,22 +1,26 @@
 ---
-title: 'How do you flash a program onto a microcontroller'
-description: 'Ever thought of what actually happens when you connect your arduino to your pc and click flash. What is actually happening that the program that you just wrote magically gets uploaded to that tiny microcontroller in front of you just by the usb port of your pc.'
+title: 'How Microcontroller Flashing Works: ArduinoISP, SPI, and AVRDUDE'
+description: 'How an AVR actually gets flashed: avrdude sends STK500 commands to an Arduino running ArduinoISP over serial, and the sketch writes the target flash over SPI.'
 pubDate: '30 Aug 2026'
+updatedDate: '15 Sep 2026'
 heroImage: '../../assets/flasher_hero.png'
 heroAlt: 'Glowing microcontroller chip icon on a purple and teal gradient background'
 ---
 
 ## Why are we here
 
-Have you ever wondered as to how exactly is it that the tiny microcontroller that you program everyday for your university class or project takes that c code from your pc into its memory ? or maybe you are here because you are finally done prototyping and are going to make your very own pcb but have stopped in your tracks, wondering how is it that I can upload this custom program that I have written for my project onto the microcontroller that will be placed in my custom board. Well I can't help you with the schematic drawing for you personal PCB but I can certainly help you understand (from my basic and measly) understanding of how exactly is it that the program travels from your pc to the microcontroller.
+Have you ever wondered how the C code on your PC actually ends up inside a microcontroller? Or maybe you are moving from a dev board to a custom PCB and want to upload firmware without relying on the Arduino IDE's board definitions. Either way, the mechanism is worth understanding.
 
-## Example 
+The short version: a tool called **avrdude** on your PC speaks a small command protocol over serial to a **programmer** — in this case, an Arduino running the [ArduinoISP sketch](https://docs.arduino.cc/built-in-examples/arduino-isp/ArduinoISP/). The programmer translates those commands into **SPI transactions** that put the target chip into programming mode and write its flash memory. That is the entire path, and this post traces it end to end using the official ArduinoISP example so every step is reproducible.
 
-Now the best explanation is always provided with a real world example. Something we can go through step by step , dissect each step (maybe even break a few steps in the middle just to see what happens if it does) so for this explanation we will be taking the help of the Arduino's ArduinoISP.ino example sketch file which turns the arduino into an AVR microcontroller programmer. You can hop off here itself if you don't want to read this entire article (in case you are already bored from it) and look at the sketch file yourself since it is pretty well commented however if you choose to stick around I hope I don't disappoint you.
+## Example
+
+The best explanation comes with a real example we can dissect step by step. We will use Arduino's `ArduinoISP.ino` example sketch, which turns an Arduino into an AVR programmer. The [full sketch is on GitHub](https://github.com/arduino/arduino-examples/blob/main/examples/11.ArduinoISP/ArduinoISP/ArduinoISP.ino) and is well commented, so you can read it directly if you prefer. If you stick around, we will walk through the parts that matter.
 
 ## Code
 
-So as soon as you enter the code you are greeted with the comments that explains what pins are we going to be using and what will their uses be . 
+All excerpts below come from the [ArduinoISP example sketch](https://docs.arduino.cc/built-in-examples/arduino-isp/ArduinoISP/). The sketch opens by explaining which pins are used and why:
+
 ```c
 // Pin 10 is used to reset the target microcontroller.
 //
@@ -36,9 +40,10 @@ So as soon as you enter the code you are greeted with the comments that explains
 // 7: Programming - In communication with the target
 ```
 
-As you can see we are using the spi pins to transfer data over to the target microcontroller. We will be using 3-wire SPI so the SCK , MISO and MOSI . Now for those of you wondering we are only going to be programming the target microcontroller so I understand why MOSI is required but why do we have to use MISO pins ? And to that I say , we think alike, but seriously the reason is to read the config of the target microcontroller for example to get its version. The other pins (Pins 9, 8, 7) are solely for indication and you can use this project without connecting them to an LED as well it will work just fine.
+Data moves over SPI using the 3-wire setup: SCK, MOSI, and MISO. Because we are only programming the target, MOSI is obviously required — but why MISO? Because the programmer also reads data back, for example the target's signature bytes to confirm which chip is connected. Pins 9, 8, and 7 only drive indicator LEDs; the project works fine without them connected.
 
-Now after this we get into the actual configuration of the programmer as we can see over here : 
+Next comes the programmer's SPI configuration:
+
 ```c
 // Configure SPI clock (in Hz).
 // E.g. for an ATtiny @ 128 kHz: the datasheet states that both the high and low
@@ -50,22 +55,29 @@ Now after this we get into the actual configuration of the programmer as we can 
 
 #define SPI_CLOCK (1000000 / 6)
 ```
-The SPI speed is basically the speed at which we will be sending the program bytes over from the program flasher over to the microcontroller. Now for the most part of the code that comes up next is just the SPI configuration. Basically the example allows us to choose between the hardware SPI and the software SPI (i.e the bitbanged SPI). Here we can see it taking place : 
+
+The SPI clock sets how fast program bytes are shifted from the programmer to the target. Most of the code that follows is SPI configuration, including the choice between the hardware peripheral and a bit-banged implementation:
+
 ```c
 #if SPI_CLOCK > (F_CPU / 128)
 #define USE_HARDWARE_SPI
 #endif
 ```
-Only if the SPI speed is over a certain threshold do we opt to use the hardware SPI otherwise we will be using the bitbanged SPI that is configured later in the code. The reason we keep a speed threshold to the bitbanged SPI is because software SPI is naturally slower than hardware SPI and hence for target controllers that can take programs at higher speeds we will have to switch over to using the dedicated hardware SPI in the program.
 
-Now next is a bit more nuanced detail that is the baud rate : 
+Hardware SPI is used only above a speed threshold; below it, the sketch falls back to the bit-banged implementation configured later in the file. The reason is simple: software SPI is naturally slower, and targets that accept faster programming need the dedicated hardware peripheral.
+
+Next comes a more nuanced detail — the baud rate:
+
 ```c
 #define BAUDRATE 19200
 ```
-Now this is the speed at which the program flasher reads the bytes of your compiled program from your pc so it is effectively the speed at which your target microcontroller is getting flashed. Now you must be thinking but you said the SPI clock speed is the speed at which we program our microcontroller and yes you would be correct to get confused, but here is the thing that SPI speed is the speed at which your microcontroller can understand things but the baud rate is the speed at which you're program flasher is reading the bytes of the program from your pc so even though your target controller might support higher speeds the effective speed it gets programmed at is the speed at which the flasher reads the data from the pc.
 
-### Side Note : 
-In case you would in the future be looking to make a bitbanged SPI program for arduino you can always refer to this sketch as an example as you can see here it has the implementation to help you through it : 
+This is the speed at which the programmer reads compiled program bytes from your PC, so it caps the effective flashing speed. It is easy to confuse with the SPI clock. The SPI clock is how fast the target can accept bits; the baud rate is how fast the programmer receives them from the PC. Your target may support a higher SPI clock, but it still only gets programmed as fast as the flasher reads data over serial.
+
+### Side note
+
+If you ever need a bit-banged SPI implementation for an Arduino, this sketch is a good reference:
+
 ```c
 class BitBangedSPI {
 public:
@@ -102,7 +114,9 @@ private:
   unsigned long pulseWidth;  // in microseconds
 };
 ```
-Now further inspecting the code we finally get to see the actual implementation of a program flasher and what is it exactly doing : 
+
+Digging further, we reach the main loop — and the actual job of the programmer:
+
 ```c
 void loop(void) {
   // is pmode active?
@@ -125,11 +139,9 @@ void loop(void) {
   }
 }
 ```
-Kind of a lackluster reveal huh ? I expected to see much more of bytes being read and sent over SPI, custom commands, step by step procedures of starting the program flashing. Well unfortunately we will have to do a bit more digging specifically in this function : 
-```c
-    avrisp();
-```
-Inside this function we see somethings that start to make more sense : 
+
+Not much of a reveal, is it? The interesting work happens one level down, in `avrisp()`, which reads command bytes from the serial port:
+
 ```c
 void avrisp() {
   uint8_t ch = getch();
@@ -210,12 +222,14 @@ void avrisp() {
 }
 ```
 
-Now over here is where we get to see custom bytes which when read over SPI perform specific commands pertaining to flashing to getting data back from the controller as well. However we cannot be typing each byte and command into the serial monitor of the arduino and program the target controller. Well don't worry we don't have to this is every flasher has a software utility that comes with it which knows what commands to send and in what order to send the bytes in , in this case to program an AVR controller we use a software known as : **AVRDUDE** . (To know more about how to use this sketch with an actual AVR microcontroller you can refer to this link : https://riktronics.wordpress.com/2016/07/26/program-avr-using-arduino-simplest-way/#more-621)
+These single-byte commands are the **STK500 protocol**. Each one triggers a specific SPI transaction against the target: entering programming mode, writing a page, or reading the device signature. Nobody types these bytes into a serial monitor by hand — flashing software sends them for you. For AVR targets that software is [AVRDUDE](https://avrdudes.github.io/avrdude/), which knows exactly which commands to send and in what order.
 
-## MOST INTERESTING FUNCTIONS
+## The most interesting functions
 
-Now there are a lot of functionalities that a programmer has but the ones we are mainly interested with are these : 
-- The program flashing starter function : 
+A programmer supports a lot of commands; the ones that matter most here are the following.
+
+Entering programming mode:
+
 ```c
 void start_pmode() {
 
@@ -247,21 +261,25 @@ void start_pmode() {
   pmode = 1;
 }
 ```
-Over here you can see the entire process of how the flasher lets the target controller know that it is going to be sending it program bytes. Now these steps are different for different controllers and the only way you can know what steps you must take for your controller will be by reading its datasheet (most likely will be found under its programming section).
 
-Next we can see here the command for the flasher to know that it has to write an entire page to the target controller : 
+This is the handshake that tells the target it is about to receive program bytes. The exact sequence differs per controller, and the authoritative source is that controller's datasheet — usually under its programming or memory-programming section. For the ATmega328P, Microchip's [ATmega328P product page](https://www.microchip.com/en-us/product/ATMEGA328P) links the current datasheet and errata.
+
+Here is the command that writes a full page to the target:
+
 ```c
  case 0x64:  //STK_PROG_PAGE
       program_page();
       break;
 ```
 
-and we can also see the need for the MISO pin as well over here : 
+And this is where MISO earns its keep — reading the device signature back:
+
 ```c
  case 0x75:  //STK_READ_SIGN 'u'
       read_signature();
       break;
 ```
+
 ```c
 void read_signature() {
   if (CRC_EOP != getch()) {
@@ -279,10 +297,18 @@ void read_signature() {
   SERIAL.print((char)STK_OK);
 }
 ```
+
 ## Conclusion
 
-This is pretty much all that happens from the pc to the flashers side. All it is reading bytes over serial and sending them via SPI to the target controller all you have to keep in mind is to send certain commands is a specific order and you are good to go. Now however there are other protocols like JTAG and SWD and they might read and send data in different formats and order but the underlying principle remains the same.
+That is the whole path from the PC to the target: the programmer reads bytes over serial, decodes them as STK500 commands, and forwards them over SPI in the required order. Other protocols such as JTAG and SWD frame their data differently, but the underlying principle is the same.
 
 ## Next Steps
 
-Well now we will have to investigate as to what happens when these bytes reach the microcontroller and how does it boot and what are the procedures that happen before it boots into the main program that we have flashed.
+Next we will look at what happens once those bytes reach the microcontroller: how it boots, and what runs before it jumps into the program you just flashed.
+
+## Sources and further reading
+
+- [ArduinoISP built-in example](https://docs.arduino.cc/built-in-examples/arduino-isp/ArduinoISP/) — official Arduino documentation for the sketch used above
+- [ArduinoISP.ino source](https://github.com/arduino/arduino-examples/blob/main/examples/11.ArduinoISP/ArduinoISP/ArduinoISP.ino) — every code excerpt in this post comes from this file
+- [AVRDUDE documentation](https://avrdudes.github.io/avrdude/) — the flashing software that sends STK500 commands to the programmer
+- [ATmega328P product page](https://www.microchip.com/en-us/product/ATMEGA328P) — datasheets and errata with the serial programming algorithm

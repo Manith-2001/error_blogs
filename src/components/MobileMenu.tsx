@@ -10,8 +10,8 @@ import { cn } from "@/lib/utils"
 
 const links = [
   { href: "/", label: "Home" },
-  { href: "/blog", label: "Blog" },
-  { href: "/about", label: "About" },
+  { href: "/blog/", label: "Blog" },
+  { href: "/about/", label: "About" },
 ]
 
 function MobileMenu({ pathname }: { pathname: string }) {

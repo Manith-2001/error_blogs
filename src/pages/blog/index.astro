@@ -1,22 +1,22 @@
 ---
-import { getCollection } from 'astro:content';
+import { getPublishedPosts } from '../../lib/posts';
 import AmbientBackground from '../../components/AmbientBackground.astro';
 import BaseHead from '../../components/BaseHead.astro';
 import Footer from '../../components/Footer.astro';
 import Header from '../../components/Header.astro';
 import PostCard from '../../components/PostCard.astro';
 import { Badge } from '@/components/ui/badge';
-import { SITE_DESCRIPTION, SITE_TITLE } from '../../consts';
 
-const posts = (await getCollection('blog')).sort(
-	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
-);
+const posts = await getPublishedPosts();
 ---
 
 <!doctype html>
 <html lang="en" class="dark">
 	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+		<BaseHead
+			title="Blog — Embedded systems & React Native guides"
+			description="All Erroroverflow posts: microcontroller flashing, AVR and RTOS internals, and React Native native module deep dives — with tested code and primary sources."
+		/>
 	</head>
 	<body class="flex min-h-screen flex-col">
 		<AmbientBackground />

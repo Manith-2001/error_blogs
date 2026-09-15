@@ -1,6 +1,5 @@
 ---
 import { Image } from 'astro:assets';
-import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 import type { MarkdownHeading } from 'astro';
 import AmbientBackground from '../components/AmbientBackground.astro';
@@ -10,6 +9,7 @@ import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
 import PostCard from '../components/PostCard.astro';
 import { Badge } from '@/components/ui/badge';
+import { getPublishedPosts } from '../lib/posts';
 import { SITE_AUTHOR, SITE_AUTHOR_URL, SITE_TITLE } from '../consts';
 import '../styles/global.css';
 
@@ -21,9 +21,8 @@ type Props = CollectionEntry<'blog'>['data'] & {
 const { title, description, pubDate, updatedDate, heroImage, heroAlt, slug, headings } =
 	Astro.props;
 
-const relatedPosts = (await getCollection('blog'))
+const relatedPosts = (await getPublishedPosts())
 	.filter((post) => post.id !== slug)
-	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
 	.slice(0, 3);
 
 const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);

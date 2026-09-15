@@ -4,7 +4,6 @@ import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { SITE_DESCRIPTION } from '../consts';
 
 export const prerender = true;
 ---
@@ -12,7 +11,10 @@ export const prerender = true;
 <!doctype html>
 <html lang="en" class="dark">
 	<head>
-		<BaseHead title="About Me" description={SITE_DESCRIPTION} />
+		<BaseHead
+			title="About Erroroverflow — embedded systems & React Native notes"
+			description="What Erroroverflow covers, how the examples are tested, how corrections and updates work, and how to get in touch."
+		/>
 	</head>
 	<body class="flex min-h-screen flex-col">
 		<AmbientBackground />
@@ -20,15 +22,76 @@ export const prerender = true;
 		<main class="flex flex-1 items-center justify-center px-4 py-16">
 			<Card className="glass w-full max-w-2xl rounded-3xl border-none shadow-none">
 				<CardHeader>
-					<CardTitle className="text-2xl font-bold tracking-tighter">About Me</CardTitle>
-					<CardDescription>Just a weird programmer</CardDescription>
+					<CardTitle className="text-2xl font-bold tracking-tighter">About Erroroverflow</CardTitle>
+					<CardDescription>
+						Who writes this, what gets covered, and how it is tested
+					</CardDescription>
 				</CardHeader>
-				<CardContent className="text-base leading-relaxed text-muted-foreground">
+				<CardContent className="space-y-8 text-base leading-relaxed text-muted-foreground">
 					<p>
-						I have nothing special to write here. Just a weird programmer doing weird things. If
-						you find anything that I have written interesting then sorry to break it to you but
-						you might be weird too.
+						Erroroverflow is a personal engineering blog about embedded systems and React Native.
+						Every post starts from a real problem — flashing firmware without the vendor IDE,
+						comparing native module frameworks, building an RTOS from scratch — and follows the
+						trail it left behind: setup, code, measurements, dead ends, and the primary
+						documentation that explains what is actually happening.
 					</p>
+
+					<section class="space-y-3">
+						<h2 class="text-lg font-semibold tracking-tight text-foreground">
+							What you will find here
+						</h2>
+						<ul class="list-disc space-y-1.5 pl-5">
+							<li>Microcontroller programming and flashing: AVR, SPI, programmers, and toolchains.</li>
+							<li>RTOS and scheduler internals, written while implementing them from scratch.</li>
+							<li>
+								React Native internals: the New Architecture, JSI, TurboModules, and Nitro
+								Modules.
+							</li>
+							<li>Debugging notes on tools that behave differently than the documentation claims.</li>
+						</ul>
+					</section>
+
+					<section class="space-y-3">
+						<h2 class="text-lg font-semibold tracking-tight text-foreground">
+							How examples are tested
+						</h2>
+						<p>
+							Commands and code samples are run locally before they are published. Sketches are
+							compiled and flashed to real hardware where possible, benchmark numbers are linked
+							to the source that produced them, and code excerpts are taken from the actual files
+							rather than rewritten from memory. When something could not be verified on
+							hardware, the post says so.
+						</p>
+					</section>
+
+					<section class="space-y-3">
+						<h2 class="text-lg font-semibold tracking-tight text-foreground">
+							Sources and corrections
+						</h2>
+						<p>
+							Claims about chips, SDKs, and tools link to datasheets, official documentation, or
+							source repositories. When a number comes from someone else's work, it is credited
+							and linked. If you spot a mistake, open an issue on GitHub — posts show an
+							&ldquo;Updated&rdquo; date when they are revised, and corrections are folded into the
+							text instead of left in an errata list.
+						</p>
+					</section>
+
+					<section class="space-y-3">
+						<h2 class="text-lg font-semibold tracking-tight text-foreground">Get in touch</h2>
+						<p>
+							Erroroverflow is written by the developer behind{' '}
+							<a
+								href="https://github.com/Manith-2001"
+								target="_blank"
+								rel="noopener noreferrer"
+								class="text-foreground underline decoration-muted-foreground/50 underline-offset-4 transition-colors hover:decoration-foreground"
+							>
+								github.com/Manith-2001
+							</a>. GitHub is the fastest way to reach me, whether it is a correction, a
+							question about a post, or a topic suggestion.
+						</p>
+					</section>
 				</CardContent>
 			</Card>
 		</main>

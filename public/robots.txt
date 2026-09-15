@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://blogs.erroroverflow.org/sitemap-index.xml

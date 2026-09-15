@@ -1,5 +1,4 @@
 ---
-import { getCollection } from 'astro:content';
 import AmbientBackground from '../components/AmbientBackground.astro';
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
@@ -8,11 +7,10 @@ import PostCard from '../components/PostCard.astro';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
+import { getPublishedPosts } from '../lib/posts';
 import { SITE_AUTHOR, SITE_AUTHOR_URL, SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 
-const posts = (await getCollection('blog')).sort(
-	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
-);
+const posts = await getPublishedPosts();
 const latest = posts.slice(0, 3);
 
 const schema = {
@@ -33,7 +31,7 @@ const schema = {
 		{
 			'@type': 'Blog',
 			name: SITE_TITLE,
-			url: new URL('/blog', Astro.site).toString(),
+			url: new URL('/blog/', Astro.site).toString(),
 			blogPost: posts.map((post) => ({
 				'@type': 'BlogPosting',
 				headline: post.data.title,
@@ -83,10 +81,10 @@ const schema = {
 				</p>
 				<div class="mt-10 flex flex-wrap items-center gap-3">
 					<Button asChild className="rounded-full px-6">
-						<a href="/blog">Read the Blog</a>
+						<a href="/blog/">Read the Blog</a>
 					</Button>
 					<Button variant="outline" asChild className="rounded-full px-6">
-						<a href="/about">About Me</a>
+						<a href="/about/">About Me</a>
 					</Button>
 				</div>
 			</section>
@@ -97,7 +95,7 @@ const schema = {
 						<div class="mb-6 flex items-end justify-between">
 							<h2 class="text-2xl font-bold tracking-tight">Latest posts</h2>
 							<a
-								href="/blog"
+								href="/blog/"
 								class="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
 							>
 								View all
