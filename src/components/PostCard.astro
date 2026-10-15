@@ -1,5 +1,6 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import { Image } from 'astro:assets';
 import { Badge } from '@/components/ui/badge';
 import { ArrowUpRight } from 'lucide-react';
 import FormattedDate from './FormattedDate.astro';
@@ -33,8 +34,9 @@ const { title, description, pubDate, heroImage, heroAlt } = post.data;
 		</Badge>
 		{
 			heroImage && (
-				<img
-					src={heroImage.src}
+				<Image
+					src={heroImage}
+					width={192}
 					alt={heroAlt ?? title}
 					class="hidden h-14 w-24 rounded-xl border border-border object-cover sm:block"
 					loading="lazy"
